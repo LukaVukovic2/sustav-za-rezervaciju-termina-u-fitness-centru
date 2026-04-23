@@ -1,4 +1,4 @@
-import ListaTermina from "./komponente/ListaTermina";
+import ListaTermina from "./components/termini/ListaTermina";
 
 function App() {
   return (
