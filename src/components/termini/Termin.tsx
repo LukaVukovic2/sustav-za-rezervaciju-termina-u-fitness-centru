@@ -5,19 +5,22 @@ import { CiClock1 } from "react-icons/ci";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { IconWrapper } from "../shared/IconWrapper";
+import { useRezervirajTermin } from "../../hooks/useRezervirajTermin";
 
 type TerminProps = {
   termin: Termin;
 };
 
 export default function TerminCard({ termin }: TerminProps) {
+  const { mutate, isPending } = useRezervirajTermin();
   const rezervirajTermin = () => {
-    if (termin.rezervirano < termin.kapacitet) {
-      console.log("Uspješno ste rezervirali termin!");
-      return;
-    }
-    console.log("Rezervacija nije uspjela");
-  }
+    mutate({
+      terminId: termin._id,
+      userId: "123",
+    });
+  };
+
+  const popunjenTermin = termin.brojRezervacija >= termin.brojMjesta;
   return (
     <Card
       title={termin.naziv}
@@ -30,27 +33,41 @@ export default function TerminCard({ termin }: TerminProps) {
         gap={5}
       >
         <IconWrapper>
-          <Avatar size={30}>{termin.trener}</Avatar>
-          <p>{termin.trener}</p>
+          <Avatar size={30}>{termin.idTrenera}</Avatar>
+          <p>{termin.idTrenera}</p>
         </IconWrapper>
-        <Flex gap={10} align="center">
+        <Flex
+          gap={10}
+          align="center"
+        >
           <IconWrapper>
-            <CiClock1 size={15} /> 
+            <CiClock1 size={15} />
             {termin.trajanjeMin} min
           </IconWrapper>
           <IconWrapper>
-            <FaPeopleGroup size={15}/> 
-            {termin.rezervirano}/{termin.kapacitet}
+            <FaPeopleGroup size={15} />
+            {termin.brojRezervacija}/{termin.brojMjesta}
           </IconWrapper>
         </Flex>
-        <Flex align="center" gap={5}>
+        <Flex
+          align="center"
+          gap={5}
+        >
           <IconWrapper>
             <IoCalendarOutline size={15} />
             {formatirajVrijemeTreninga(termin.vrijeme)}
           </IconWrapper>
         </Flex>
-        <Button onClick={rezervirajTermin}>
-          Rezerviraj
+        <Button
+          onClick={rezervirajTermin}
+          loading={isPending}
+          disabled={popunjenTermin || termin.userRezervirao}
+        >
+          {termin.userRezervirao
+            ? "Rezervirano"
+            : !popunjenTermin
+              ? "Rezerviraj"
+              : "Popunjeno"}
         </Button>
       </Flex>
     </Card>
