@@ -100,6 +100,29 @@ app.post("/termini", async (req, res) => {
   res.json(item);
 });
 
+app.delete("/rezervacije", async (req, res) => {
+  try {
+    const { terminId, userId } = req.body;
+    const rezervacija = await Rezervacija.findOneAndDelete({ terminId, userId });
+
+    if (!rezervacija) {
+      return res.status(404).json({
+        message: "Rezervacija nije pronađena",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Rezervacija uspješno otkazana",
+      data: rezervacija,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Greška na serveru",
+    });
+  }
+})
+
 app.post("/rezervacije", async (req, res) => {
   try {
     const { terminId, userId } = req.body;

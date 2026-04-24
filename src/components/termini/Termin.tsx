@@ -1,4 +1,5 @@
 import { Avatar, Button, Card, Flex } from "antd";
+import type { MouseEvent } from "react";
 import type { Termin } from "../../types";
 import { formatirajVrijemeTreninga } from "../../helpers/formatirajVrijemeTreninga";
 import { CiClock1 } from "react-icons/ci";
@@ -7,23 +8,40 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import { IconWrapper } from "../shared/IconWrapper";
 import { useRezervirajTermin } from "../../hooks/useRezervirajTermin";
 import { NavLink } from "react-router";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { useOtkaziRezervaciju } from "../../hooks/useOtkaziRezervaciju";
 
 type TerminProps = {
   termin: Termin;
 };
 
 export default function TerminCard({ termin }: TerminProps) {
-  const { mutate, isPending } = useRezervirajTermin();
-  const rezervirajTermin = () => {
-    mutate({
+  const { mutate: mutateRezerviraj, isPending: isPendingRezerviraj } = useRezervirajTermin();
+  const { mutate: mutateOtkazi, isPending: isPendingOtkazi } = useOtkaziRezervaciju();
+
+  const rezervirajTermin = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    mutateRezerviraj({
       terminId: termin._id,
       userId: "123",
     });
   };
 
+  const otkaziRezervaciju = (e: MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    mutateOtkazi({
+      terminId: termin._id,
+      userId: "123"
+    });
+  };
+
   const popunjenTermin = termin.brojRezervacija >= termin.brojMjesta;
+  const uTijekuAkcija = isPendingRezerviraj || isPendingOtkazi; 
   return (
-    <NavLink to={`/termin/${termin._id}`} title="Vidi detalje">
+    <NavLink
+      to={`/termin/${termin._id}`}
+      title="Vidi detalje"
+    >
       <Card
         title={termin.naziv}
         variant="borderless"
@@ -60,17 +78,28 @@ export default function TerminCard({ termin }: TerminProps) {
               {formatirajVrijemeTreninga(termin.vrijeme)}
             </IconWrapper>
           </Flex>
-          <Button
-            onClick={rezervirajTermin}
-            loading={isPending}
-            disabled={popunjenTermin || termin.userRezervirao}
-          >
-            {termin.userRezervirao
-              ? "Rezervirano"
-              : !popunjenTermin
-                ? "Rezerviraj"
-                : "Popunjeno"}
-          </Button>
+          <IconWrapper>
+            <Button
+              onClick={rezervirajTermin}
+              loading={uTijekuAkcija}
+              disabled={popunjenTermin || termin.userRezervirao}
+            >
+              {termin.userRezervirao
+                ? "Rezervirano"
+                : !popunjenTermin
+                  ? "Rezerviraj"
+                  : "Popunjeno"}
+            </Button>
+            {termin.userRezervirao && (
+              <Button
+                loading={uTijekuAkcija}
+                onClick={otkaziRezervaciju}
+                type="text"
+                icon={<MdOutlineDeleteForever size={25} />}
+                title="Otkaži rezervaciju"
+              />
+            )}
+          </IconWrapper>
         </Flex>
       </Card>
     </NavLink>
