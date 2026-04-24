@@ -15,27 +15,35 @@ mongoose.connection.once("open", () => {
   console.log("Connected to DB:", mongoose.connection.name);
 });
 
-const Termin = mongoose.model("Termin", {
+const Termin = mongoose.model(
+  "Termin",
+  {
     naziv: String,
     trener: String,
     vrijeme: Date,
     trajanjeMin: Number,
     kapacitet: Number,
-    rezervirano: Number
-}, "termini");
+    rezervirano: Number,
+  },
+  "termini",
+);
 
-const Rezervacija = mongoose.model("Rezervacija", {
-  terminId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Termin",
-    required: true,
+const Rezervacija = mongoose.model(
+  "Rezervacija",
+  {
+    terminId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Termin",
+      required: true,
+    },
+    userId: String,
+    vrijemeRezervacije: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  userId: String,
-  vrijemeRezervacije: {
-    type: Date,
-    default: Date.now,
-  },
-}, "rezervacije");
+  "rezervacije",
+);
 
 app.get("/termini", async (req, res) => {
   try {
@@ -65,6 +73,24 @@ app.get("/termini", async (req, res) => {
     res.json(rezultat);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/termini/:id", async (req, res) => {
+  try {
+    const termin = await Termin.findById(req.params.id);
+    if (!termin) {
+      return res.status(404).json({ message: "Termin nije pronađen" });
+    }
+    const brojRezervacija = await Rezervacija.countDocuments({
+      terminId: req.params.id,
+    });
+    res.json({
+      ...termin.toObject(),
+      brojRezervacija,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Greška na serveru", error });
   }
 });
 

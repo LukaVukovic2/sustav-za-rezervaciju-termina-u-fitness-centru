@@ -1,9 +1,8 @@
-import ListaTermina from "./components/termini/ListaTermina";
+import { RouterProvider } from "react-router-dom";
+import { appRouter } from "./routes/AppRouter";
 
 function App() {
-  return (
-    <ListaTermina />
-  );
+  return <RouterProvider router={appRouter} />;
 }
 
 export default App;
