@@ -4,16 +4,19 @@ import TerminCard from "./Termin";
 
 export default function ListaTermina() {
   const { data: termini, isLoading } = useDohvatiTermine();
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div>Učitavanje termina...</div>;
 
   return (
-    <>
-      <h1>Termini:</h1>
-      <Flex gap={10} wrap>
-        {termini?.map((i) => 
-          <TerminCard key={i._id} termin={i} />
-        )}
-      </Flex>
-    </>
-  )
+    <Flex
+      gap={10}
+      wrap
+    >
+      {termini?.map((i) => (
+        <TerminCard
+          key={i._id}
+          termin={i}
+        />
+      ))}
+    </Flex>
+  );
 }

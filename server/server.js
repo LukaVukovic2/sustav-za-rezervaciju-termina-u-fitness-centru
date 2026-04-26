@@ -103,7 +103,10 @@ app.post("/termini", async (req, res) => {
 app.delete("/rezervacije", async (req, res) => {
   try {
     const { terminId, userId } = req.body;
-    const rezervacija = await Rezervacija.findOneAndDelete({ terminId, userId });
+    const rezervacija = await Rezervacija.findOneAndDelete({
+      terminId,
+      userId,
+    });
 
     if (!rezervacija) {
       return res.status(404).json({
@@ -121,7 +124,7 @@ app.delete("/rezervacije", async (req, res) => {
       message: "Greška na serveru",
     });
   }
-})
+});
 
 app.post("/rezervacije", async (req, res) => {
   try {
@@ -142,6 +145,31 @@ app.post("/rezervacije", async (req, res) => {
     res.json(nova);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/rezervacije", async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+     const rezervacije = await Rezervacija.find({ userId });
+
+    if (!rezervacije.length) return res.json([]);
+
+    const termini = await Termin.find();
+
+    const rezultat = rezervacije.map(rezervacija => {
+      const termin = termini.find(t => t._id.toString() === rezervacija.terminId.toString());
+      return {
+        ...termin.toObject(),
+        ...rezervacija.toObject()
+      };
+    }).sort((a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime());
+
+    return res.json(rezultat);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Greška na serveru" });
   }
 });
 

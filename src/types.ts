@@ -17,6 +17,8 @@ export type Rezervacija = {
   vrijemeRezervacije?: Date
 }
 
+export type RezervacijaMapped = Termin & Rezervacija;
+
 export type Korisnik = {
   _id: string,
   ime: string
