@@ -23,3 +23,12 @@ export type Korisnik = {
   _id: string,
   ime: string
 }
+
+export type TerminForm = {
+  naziv: string;
+  vrijeme: Date;
+  opis: string;
+  brojMjesta: number;
+  trajanjeMin: number;
+  idTrenera: string;
+}

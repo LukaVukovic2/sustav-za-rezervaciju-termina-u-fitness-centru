@@ -19,11 +19,12 @@ const Termin = mongoose.model(
   "Termin",
   {
     naziv: String,
-    trener: String,
+    idTrenera: String,
     vrijeme: Date,
     trajanjeMin: Number,
-    kapacitet: Number,
     rezervirano: Number,
+    brojMjesta: Number,
+    opis: String
   },
   "termini",
 );

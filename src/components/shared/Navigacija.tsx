@@ -6,12 +6,15 @@ type MenuItem = Required<MenuProps>['items'][number];
 const stavke: MenuItem[] = [
   {
     key: 'termini',
-    label: 'Termini',
-    icon: <div></div>,
+    label: 'Termini'
   },
   {
     key: 'mojeRezervacije',
     label: 'Moje rezervacije'
+  },
+  {
+    key: 'noviTermin',
+    label: 'Dodaj termin'
   }
 ];
 export default function Navigacija() {
@@ -24,6 +27,9 @@ export default function Navigacija() {
         break;
       case 'mojeRezervacije':
         navigate("/moje-rezervacije");
+        break;
+      case 'noviTermin':
+        navigate("/termin/kreiraj");
         break;
       default:
         break;
