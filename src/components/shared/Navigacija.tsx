@@ -39,7 +39,7 @@ export default function Navigacija() {
   return (
     <Menu
       onClick={onClick}
-      style={{ width: 256 }}
+      style={{ width: 256, margin: "20px 0" }}
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="inline"

@@ -65,6 +65,7 @@ const NoviTerminPage = () => {
         <Input
           type="number"
           placeholder="Trajanje termina u minutama"
+          suffix="min"
         />
       </Form.Item>
 
@@ -93,13 +94,13 @@ const NoviTerminPage = () => {
             type="primary"
             htmlType="submit"
           >
-            Submit
+            Dodaj
           </Button>
           <Button
             htmlType="button"
             onClick={onReset}
           >
-            Reset
+            Resetiraj
           </Button>
         </Space>
       </Form.Item>

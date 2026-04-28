@@ -48,9 +48,18 @@ const Rezervacija = mongoose.model(
 
 app.get("/termini", async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const { userId, search } = req.query;
 
-    const termini = await Termin.find();
+    const filter = {};
+
+    if (search) {
+      filter.$or = [
+        { naziv: { $regex: search, $options: "i" } },
+        { idTrenera: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const termini = await Termin.find(filter);
     const rezervacije = await Rezervacija.find();
 
     const rezultat = termini.map((t) => {
@@ -153,19 +162,19 @@ app.get("/rezervacije", async (req, res) => {
   try {
     const { userId } = req.query;
 
-     const rezervacije = await Rezervacija.find({ userId });
+    const rezervacije = await Rezervacija.find({ userId });
 
     if (!rezervacije.length) return res.json([]);
 
     const termini = await Termin.find();
 
     const rezultat = rezervacije.map(rezervacija => {
-      const termin = termini.find(t => t._id.toString() === rezervacija.terminId.toString());
-      return {
-        ...termin.toObject(),
-        ...rezervacija.toObject()
-      };
-    }).sort((a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime());
+        const termin = termini.find(t => t._id.toString() === rezervacija.terminId.toString());
+        return {
+          ...termin.toObject(),
+          ...rezervacija.toObject()
+        };
+      }).sort((a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime());
 
     return res.json(rezultat);
   } catch (error) {

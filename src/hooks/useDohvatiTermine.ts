@@ -5,11 +5,13 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const userId = "123";
 
-export const useDohvatiTermine = () => {
+export const useDohvatiTermine = (search: string) => {
   return useQuery<Termin[], Error>({
-    queryKey: ["termini"],
+    queryKey: ["termini", search],
     queryFn: async () => {
-      const res = await fetch(`${baseUrl}/termini?userId=${userId}`);
+      const params = new URLSearchParams({ userId, ...(search && { search }), });
+
+      const res = await fetch(`${baseUrl}/termini?${params.toString()}`);
 
       if (!res.ok) {
         throw new Error("Greška pri dohvaćanju termina");
