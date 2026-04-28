@@ -109,3 +109,7 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.css-var-root.ant-card {
+  --ant-card-header-padding: 0px;
+}
