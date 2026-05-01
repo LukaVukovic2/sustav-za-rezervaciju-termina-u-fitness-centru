@@ -1,39 +1,22 @@
 import { Table } from "antd";
 import { useDohvatiRezervacijePoID } from "../hooks/useDohvatiRezervacijePoID";
-import { formatirajVrijemeTreninga } from "../helpers/formatirajVrijemeTreninga";
+import { mojeRezervacijeStupci } from "../components/stupciTablice/mojeRezervacijeStupci";
+import type { RezervacijaMapped } from "../types";
 
-const userId = "123"
-
-const columns = [
-  {
-    title: 'Naziv termina',
-    dataIndex: 'naziv',
-    key: 'nazivTermina',
-  },
-  {
-    title: 'Vrijeme',
-    dataIndex: 'vrijeme',
-    key: 'vrijeme',
-  },
-  {
-    title: 'Trajanje',
-    dataIndex: 'trajanjeMin',
-    key: 'trajanjeMin',
-  },
-];
+const userId = "123";
 
 const MojeRezervacijePage = () => {
   const { data: rezervacije, isLoading } = useDohvatiRezervacijePoID(userId);
+  if (isLoading) return <div>Dohvaćanje rezervacija...</div>;
 
-  const mapiraneRezervacije = rezervacije?.map(rezervacija => ({
-    ...rezervacija,
-    trajanjeMin: rezervacija.trajanjeMin + " min",
-    vrijeme: formatirajVrijemeTreninga(rezervacija.vrijeme)
-  }));
-  
-  if (isLoading) return <div>Dohvaćanje rezervacija...</div>
-  
-  return <Table dataSource={mapiraneRezervacije} columns={columns} />;
-}
+  return (
+    <Table<RezervacijaMapped>
+      dataSource={rezervacije}
+      locale={{ emptyText: "Niste još uvijek napravili nijednu rezervaciju" }}
+      columns={mojeRezervacijeStupci()}
+      rowKey="_id"
+    />
+  );
+};
 
 export default MojeRezervacijePage;

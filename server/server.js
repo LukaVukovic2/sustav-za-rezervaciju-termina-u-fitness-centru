@@ -110,6 +110,26 @@ app.post("/termini", async (req, res) => {
   res.json(item);
 });
 
+app.delete("/termini/:id", async (req, res) => {
+  try {
+    const _id = req.params.id;
+    const termin = await Termin.findOneAndDelete({
+      _id,
+    });
+
+    if (!termin) {
+      return res.status(404).json({
+        message: "Termin nije pronađen",
+      });
+    }
+    return res.status(200).json({
+      message: "Termin uspješno obrisan",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Greška na serveru", error });
+  }
+});
+
 app.get("/termini/moji-termini/:id", async (req, res) => {
   try {
     const termini = await Termin.find({
@@ -119,7 +139,7 @@ app.get("/termini/moji-termini/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Greška na serveru", error });
   }
-})
+});
 
 app.delete("/rezervacije", async (req, res) => {
   try {
@@ -179,13 +199,19 @@ app.get("/rezervacije", async (req, res) => {
 
     const termini = await Termin.find();
 
-    const rezultat = rezervacije.map(rezervacija => {
-        const termin = termini.find(t => t._id.toString() === rezervacija.terminId.toString());
+    const rezultat = rezervacije
+      .map((rezervacija) => {
+        const termin = termini.find(
+          (t) => t._id.toString() === rezervacija.terminId.toString(),
+        );
         return {
           ...termin.toObject(),
-          ...rezervacija.toObject()
+          ...rezervacija.toObject(),
         };
-      }).sort((a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime());
+      })
+      .sort(
+        (a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime(),
+      );
 
     return res.json(rezultat);
   } catch (error) {
