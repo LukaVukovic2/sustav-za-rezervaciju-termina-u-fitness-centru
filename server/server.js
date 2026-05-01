@@ -110,6 +110,17 @@ app.post("/termini", async (req, res) => {
   res.json(item);
 });
 
+app.get("/termini/moji-termini/:id", async (req, res) => {
+  try {
+    const termini = await Termin.find({
+      idTrenera: req.params.id
+    });
+    res.json(termini);
+  } catch (error) {
+    res.status(500).json({ message: "Greška na serveru", error });
+  }
+})
+
 app.delete("/rezervacije", async (req, res) => {
   try {
     const { terminId, userId } = req.body;
