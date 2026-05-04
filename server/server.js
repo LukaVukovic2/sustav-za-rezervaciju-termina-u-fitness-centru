@@ -110,6 +110,27 @@ app.post("/termini", async (req, res) => {
   res.json(item);
 });
 
+app.patch("/termini/:id", async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updatedTermin = await Termin.findByIdAndUpdate(id, updateData, {
+      returnDocument: 'after',
+      runValidators: true
+    });
+
+    if (!updatedTermin) {
+      return res.status(404).json({ message: "Termin nije pronađen" });
+    }
+
+    res.json(updatedTermin);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Došlo je do greške pri uređivanju termina" });
+  }
+});
+
 app.delete("/termini/:id", async (req, res) => {
   try {
     const _id = req.params.id;

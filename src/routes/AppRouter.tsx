@@ -1,10 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
-import TerminDetaljiPage from "../pages/TerminDetaljiPage";
 import ListaTermina from "../components/termini/ListaTermina";
 import { GlavniLayout } from "../components/shared/GlavniLayout"
-import MojeRezervacijePage from "../pages/MojeRezervacijePage";
-import NoviTerminPage from "../pages/NoviTerminPage";
-import MojiTerminiPage from "../pages/MojiTerminiPage";
+import { MojeRezervacijePage, MojiTerminiPage, NoviTerminPage, TerminDetaljiPage, UrediTerminPage } from "../pages";
+
 
 export const appRouter = createBrowserRouter([
   {
@@ -15,7 +13,8 @@ export const appRouter = createBrowserRouter([
       { path: "/termin/:id", element: <TerminDetaljiPage /> },
       { path: "/moje-rezervacije", element: <MojeRezervacijePage />},
       { path: "/termin/kreiraj", element: <NoviTerminPage />},
-      { path: "/moji-termini", element: <MojiTerminiPage />}
+      { path: "/moji-termini", element: <MojiTerminiPage />},
+      { path: "/termin/uredi/:id", element: <UrediTerminPage />}
     ],
   },
   {

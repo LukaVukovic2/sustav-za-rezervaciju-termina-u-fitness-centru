@@ -4,9 +4,11 @@ import { formatirajVrijemeTreninga } from "../../helpers/formatirajVrijemeTrenin
 import { Flex, Popconfirm } from "antd";
 import { AkcijskiButton } from "../shared/AkcijskiButton";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
+import { NavLink } from "react-router";
 
 export function mojiTerminiStupci(
-  izbrisiTermin: (id: string) => void,
+  izbrisiTermin: (id: string) => void
 ): ColumnsType<Termin> {
   return [
     {
@@ -55,6 +57,11 @@ export function mojiTerminiStupci(
               <MdOutlineDeleteForever size={25} />
             </AkcijskiButton>
           </Popconfirm>
+          <AkcijskiButton>
+            <NavLink to={`/termin/uredi/${termin._id}`}>
+              <CiEdit size={25} />
+            </NavLink>
+          </AkcijskiButton>
         </Flex>
       ),
     },

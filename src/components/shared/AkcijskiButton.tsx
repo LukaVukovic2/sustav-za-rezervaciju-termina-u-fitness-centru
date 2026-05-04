@@ -9,6 +9,7 @@ export const AkcijskiButton = ({ children, ...props }: Props) => {
   return (
     <Button
       className="akcijski-btn"
+      type="text"
       {...props}
     >
       {children}

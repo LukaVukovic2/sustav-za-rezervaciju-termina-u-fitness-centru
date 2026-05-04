@@ -25,6 +25,7 @@ export type Korisnik = {
 }
 
 export type TerminForm = {
+  _id: string;
   naziv: string;
   vrijeme: Date;
   opis: string;
