@@ -1,15 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Termin } from "../types";
+import type { Filteri, Termin } from "../types";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 const userId = "123";
 
-export const useDohvatiTermine = (search: string) => {
+export const useDohvatiTermine = (
+  search: string,
+  filteri: Filteri | undefined,
+) => {
   return useQuery<Termin[], Error>({
-    queryKey: ["termini", search],
+    queryKey: ["termini", search, filteri],
     queryFn: async () => {
-      const params = new URLSearchParams({ userId, ...(search && { search }), });
+      const params = new URLSearchParams();
+
+      params.append("userId", userId);
+
+      if (search) {
+        params.append("search", search);
+      }
+
+      if (filteri?.vrijeme) {
+        params.append("vrijemeOd", filteri.vrijeme[0].toString());
+        params.append("vrijemeDo", filteri.vrijeme[1].toString());
+      }
 
       const res = await fetch(`${baseUrl}/termini?${params.toString()}`);
 
@@ -17,8 +31,7 @@ export const useDohvatiTermine = (search: string) => {
         throw new Error("Greška pri dohvaćanju termina");
       }
 
-      const data = await res.json();
-      return data;
+      return res.json();
     },
   });
 };

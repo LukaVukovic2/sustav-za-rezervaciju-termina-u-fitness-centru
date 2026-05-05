@@ -33,3 +33,7 @@ export type TerminForm = {
   trajanjeMin: number;
   idTrenera: string;
 }
+
+export type Filteri = {
+  vrijeme: number[];
+}

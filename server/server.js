@@ -48,7 +48,7 @@ const Rezervacija = mongoose.model(
 
 app.get("/termini", async (req, res) => {
   try {
-    const { userId, search } = req.query;
+    const { userId, search, vrijemeOd, vrijemeDo } = req.query;
 
     const filter = {};
 
@@ -57,6 +57,18 @@ app.get("/termini", async (req, res) => {
         { naziv: { $regex: search, $options: "i" } },
         { idTrenera: { $regex: search, $options: "i" } },
       ];
+    }
+
+    if (vrijemeOd || vrijemeDo) {
+      filter.trajanjeMin = {};
+
+      if (vrijemeOd) {
+        filter.trajanjeMin.$gte = Number(vrijemeOd);
+      }
+
+      if (vrijemeDo) {
+        filter.trajanjeMin.$lte = Number(vrijemeDo);
+      }
     }
 
     const termini = await Termin.find(filter);
