@@ -13,10 +13,6 @@ const stavke: MenuItem[] = [
     label: 'Moje rezervacije'
   },
   {
-    key: 'noviTermin',
-    label: 'Dodaj termin'
-  },
-  {
     key: 'mojiTermini',
     label: 'Moji termini'
   }
@@ -31,9 +27,6 @@ export default function Navigacija() {
         break;
       case 'mojeRezervacije':
         navigate("/moje-rezervacije");
-        break;
-      case 'noviTermin':
-        navigate("/termin/kreiraj");
         break;
       case 'mojiTermini':
         navigate("/moji-termini");
