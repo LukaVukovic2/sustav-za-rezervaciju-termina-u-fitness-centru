@@ -19,9 +19,14 @@ export type Rezervacija = {
 
 export type RezervacijaMapped = Termin & Rezervacija;
 
+export type Uloga = "Korisnik" | "Trener" | "Administrator";
+
 export type Korisnik = {
   _id: string,
-  ime: string
+  ime: string,
+  email: string,
+  uloga: Uloga,
+  specijalnost?: string
 }
 
 export type TerminForm = {

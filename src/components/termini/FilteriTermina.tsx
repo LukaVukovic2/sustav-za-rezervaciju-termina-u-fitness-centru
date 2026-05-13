@@ -6,7 +6,7 @@ type Props = FilteriProps & {
   sakrij: () => void;
 };
 
-const PopoverContent = ({ setFilteri }: Props) => {
+const PopoverContent = ({ sakrij, setFilteri }: Props) => {
   const [trenutneVrijednostiFiltera, setTrenutneVrijednostiFiltera] = useState<Filteri>({vrijeme: [1, 200]});
 
   const primijeniFiltere = () => {
@@ -14,6 +14,7 @@ const PopoverContent = ({ setFilteri }: Props) => {
       ...prev,
       vrijeme: trenutneVrijednostiFiltera?.vrijeme
     }))
+    sakrij();
   }
 
   return (

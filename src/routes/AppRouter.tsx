@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import ListaTermina from "../components/termini/ListaTermina";
 import { GlavniLayout } from "../components/shared/GlavniLayout"
 import { MojeRezervacijePage, MojiTerminiPage, NoviTerminPage, TerminDetaljiPage, UrediTerminPage } from "../pages";
+import AuthForma from "../components/autetifikacija/AuthForma";
 
 
 export const appRouter = createBrowserRouter([
@@ -19,6 +20,6 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <div>Login stranica</div>
+    element: <AuthForma />
   },
 ]);

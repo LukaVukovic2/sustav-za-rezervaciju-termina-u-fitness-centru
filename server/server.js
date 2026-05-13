@@ -4,6 +4,8 @@ require("dotenv").config({ path: path.join(__dirname, ".env.server") });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const bcrypt = require("bcrypt"); 
+const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(cors());
@@ -45,6 +47,60 @@ const Rezervacija = mongoose.model(
   },
   "rezervacije",
 );
+
+const Korisnik = mongoose.model(
+  "Korisnik",
+  {
+    ime: {
+      type: String,
+      required: true,
+      unique: true
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true
+    },
+
+    lozinka: {
+      type: String,
+      required: true
+    },
+    uloga: {
+      type: String,
+      required: true
+    },
+    specijalnost: {
+      type: String
+    }
+  },
+  "korisnici"
+);
+
+app.post("/register", async (req, res) => {
+  try {
+    const { email, lozinka, uloga, specijalnost = null } = req.body;
+
+    const hashLozinka = await bcrypt.hash(lozinka, 10);
+
+    const korisnik = new Korisnik({
+      email,
+      lozinka: hashLozinka,
+      uloga,
+      specijalnost
+    })
+
+    await korisnik.save();
+
+    res.status(201).json({
+      message: "Uspješna korisnička registracija"
+    })
+
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})
 
 app.get("/termini", async (req, res) => {
   try {
