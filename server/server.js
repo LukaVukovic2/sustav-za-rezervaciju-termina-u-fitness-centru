@@ -34,8 +34,27 @@ app.post("/registracija", async (req, res) => {
 
     await korisnik.save();
 
+    const token = jwt.sign(
+      {
+        id: korisnik._id,
+        uloga: korisnik.uloga
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d"
+      }
+    );
+
     res.status(201).json({
-      message: "Uspješna korisnička registracija"
+      message: "Uspješna korisnička registracija",
+      token,
+      korisnik: {
+        id: korisnik._id,
+        ime: korisnik.ime,
+        email: korisnik.email,
+        uloga: korisnik.uloga,
+        specijalnost: korisnik.specijalnost
+      }
     })
 
   } catch (err) {

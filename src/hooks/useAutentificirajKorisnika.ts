@@ -24,8 +24,8 @@ export const useAutentificirajKorisnika = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["korisnici"] });
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("korisnik", data.korisnik);
+      localStorage.setItem("token", JSON.stringify(data.token));
+      localStorage.setItem("korisnik", JSON.stringify(data.korisnik));
 
       message.success(data.message || "Dobrodošli");
       navigate("/");

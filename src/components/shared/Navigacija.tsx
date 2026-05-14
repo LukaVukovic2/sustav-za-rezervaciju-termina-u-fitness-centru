@@ -1,23 +1,10 @@
 import { Menu, type MenuProps } from "antd";
 import { useNavigate } from "react-router";
+import { useAuth } from "../../hooks/useAuth";
+import { dohvatiStavke } from "../../helpers/dohvatiStavkeNavigacije";
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-const stavke: MenuItem[] = [
-  {
-    key: 'termini',
-    label: 'Termini'
-  },
-  {
-    key: 'mojeRezervacije',
-    label: 'Moje rezervacije'
-  },
-  {
-    key: 'mojiTermini',
-    label: 'Moji termini'
-  }
-];
 export default function Navigacija() {
+  const { odjaviKorisnika, korisnik } = useAuth();
   const navigate = useNavigate();
 
   const onClick: MenuProps['onClick'] = (e) => {
@@ -31,6 +18,10 @@ export default function Navigacija() {
       case 'mojiTermini':
         navigate("/moji-termini");
         break;
+      case 'odjava':
+        odjaviKorisnika();
+        navigate("/autentifikacija/forma");
+        break;
       default:
         break;
     }
@@ -43,7 +34,7 @@ export default function Navigacija() {
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="inline"
-      items={stavke}
+      items={dohvatiStavke(korisnik?.uloga)}
     />
   );
 };
