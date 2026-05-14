@@ -17,6 +17,7 @@ import { useRezervirajTermin } from "../../hooks/useRezervirajTermin";
 import { NavLink } from "react-router";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { useOtkaziRezervaciju } from "../../hooks/useOtkaziRezervaciju";
+import { useAuth } from "../../hooks/useAuth";
 
 type TerminProps = {
   termin: Termin;
@@ -25,6 +26,7 @@ type TerminProps = {
 export default function TerminCard({ termin }: TerminProps) {
   const { mutate: mutateRezerviraj, isPending: isPendingRezerviraj } = useRezervirajTermin();
   const { mutate: mutateOtkazi, isPending: isPendingOtkazi } = useOtkaziRezervaciju();
+  const { korisnik } = useAuth();
 
   const rezervirajTermin = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -91,36 +93,41 @@ export default function TerminCard({ termin }: TerminProps) {
             {formatirajVrijemeTreninga(termin.vrijeme)}
           </IconWrapper>
         </Flex>
-        <IconWrapper>
-          <Button
-            onClick={rezervirajTermin}
-            loading={uTijekuAkcija}
-            disabled={popunjenTermin || termin.userRezervirao}
-          >
-            {termin.userRezervirao
-              ? "Rezervirano"
-              : !popunjenTermin
-                ? "Rezerviraj"
-                : "Popunjeno"}
-          </Button>
-          {termin.userRezervirao && (
-            <Popconfirm
-              title="Otkazivanje rezervacije"
-              description="Jeste li sigurni da želite otkazati rezervaciju?"
-              onConfirm={confirm}
-              okText="Da"
-              cancelText="Ne"
-              placement="bottom"
-            >
+        
+        {
+          korisnik?.uloga === "Korisnik" && (
+            <IconWrapper>
               <Button
+                onClick={rezervirajTermin}
                 loading={uTijekuAkcija}
-                type="text"
-                icon={<MdOutlineDeleteForever size={25} />}
-                title="Otkaži rezervaciju"
-              />
-            </Popconfirm>
-          )}
-        </IconWrapper>
+                disabled={popunjenTermin || termin.userRezervirao}
+              >
+                {termin.userRezervirao
+                  ? "Rezervirano"
+                  : !popunjenTermin
+                    ? "Rezerviraj"
+                    : "Popunjeno"}
+              </Button>
+              {termin.userRezervirao && (
+                <Popconfirm
+                  title="Otkazivanje rezervacije"
+                  description="Jeste li sigurni da želite otkazati rezervaciju?"
+                  onConfirm={confirm}
+                  okText="Da"
+                  cancelText="Ne"
+                  placement="bottom"
+                >
+                  <Button
+                    loading={uTijekuAkcija}
+                    type="text"
+                    icon={<MdOutlineDeleteForever size={25} />}
+                    title="Otkaži rezervaciju"
+                  />
+                </Popconfirm>
+              )}
+            </IconWrapper>
+          )
+        }
       </Flex>
     </Card>
   );

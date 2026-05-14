@@ -30,7 +30,7 @@ export const dohvatiStavke = (uloga?: string) => {
   if (!uloga) return baza;
 
   if (uloga === "Trener") {
-    return [...baza, ...stavkeKorisnika, ...stavkeTrenera, ...odjaviKorisnika];
+    return [...baza, ...stavkeTrenera, ...odjaviKorisnika];
   }
 
   return [...baza, ...stavkeKorisnika, ...odjaviKorisnika];

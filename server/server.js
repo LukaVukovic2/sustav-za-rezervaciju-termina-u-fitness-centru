@@ -49,7 +49,7 @@ app.post("/registracija", async (req, res) => {
       message: "Uspješna korisnička registracija",
       token,
       korisnik: {
-        id: korisnik._id,
+        _id: korisnik._id,
         ime: korisnik.ime,
         email: korisnik.email,
         uloga: korisnik.uloga,
@@ -100,7 +100,7 @@ app.post("/prijava", async (req, res) => {
       message: "Uspješna prijava",
       token,
       korisnik: {
-        id: korisnik._id,
+        _id: korisnik._id,
         ime: korisnik.ime,
         email: korisnik.email,
         uloga: korisnik.uloga,

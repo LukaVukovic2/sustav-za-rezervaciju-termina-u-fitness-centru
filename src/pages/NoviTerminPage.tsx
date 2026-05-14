@@ -5,13 +5,17 @@ import type { Dayjs } from "dayjs";
 import type { TerminForm } from "../types";
 import dayjs from "dayjs";
 import { useDodajTermin } from "../hooks/useDodajTermin";
+import { useAuth } from "../hooks/useAuth";
 
 const NoviTerminPage = () => {
+  const { korisnik } = useAuth();
+  console.log(korisnik)
   const [form] = useForm<TerminForm>();
   const { mutate } = useDodajTermin();
 
   const onFinish = (values: TerminForm) => {
-    mutate(values);
+    if (!korisnik?._id) return;
+    mutate({termin: values, idTrenera: korisnik._id});
   };
 
   const onReset = () => form.resetFields();

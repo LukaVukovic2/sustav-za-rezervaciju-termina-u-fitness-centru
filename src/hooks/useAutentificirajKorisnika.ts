@@ -28,7 +28,7 @@ export const useAutentificirajKorisnika = () => {
       localStorage.setItem("korisnik", JSON.stringify(data.korisnik));
 
       message.success(data.message || "Dobrodošli");
-      navigate("/");
+      navigate(`${data.korisnik.uloga === "Korisnik" ? "/" : "/moji-termini"}`);
     },
     onError: (error: AxiosError<Error>) => {
       const msg =

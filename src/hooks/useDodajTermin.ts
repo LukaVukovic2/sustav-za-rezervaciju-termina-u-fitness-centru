@@ -5,13 +5,12 @@ import type { TerminForm } from "../types";
 import { useNavigate } from "react-router";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
-const idTrenera = "Mate Vilac";
 
 export const useDodajTermin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const dodaj = async (termin: TerminForm) => {
+  const dodaj = async ({termin, idTrenera}: {termin: TerminForm, idTrenera: string}) => {
     const res = await axios.post(`${baseUrl}/termini`, {...termin, idTrenera});
 
     return res.data;

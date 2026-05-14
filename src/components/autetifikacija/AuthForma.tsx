@@ -14,7 +14,7 @@ export default function AuthForma() {
   const { mutate } = useAutentificirajKorisnika();
   const [form] = useForm<AuthPolja>();
   const uloga = Form.useWatch('uloga', form);
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState<boolean>(true);
 
   const onFinish = (values: AuthPolja) => {
     mutate({ korisnik: values, isLogin })
