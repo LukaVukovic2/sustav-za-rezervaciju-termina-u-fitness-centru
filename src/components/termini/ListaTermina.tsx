@@ -5,12 +5,14 @@ import type { SearchProps } from "antd/es/input";
 import { useEffect, useState } from "react";
 import FilteriTermina from "./FilteriTermina";
 import type { Filteri } from "../../types";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function ListaTermina() {
+  const { korisnik } = useAuth();
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const [filteri, setFilteri] = useState<Filteri>()
-  const { data: termini, isLoading } = useDohvatiTermine(debouncedSearch, filteri);
+  const { data: termini, isLoading } = useDohvatiTermine(debouncedSearch, filteri, korisnik?._id);
 
   const onSearch: SearchProps["onSearch"] = (value) => setSearch(value);
 

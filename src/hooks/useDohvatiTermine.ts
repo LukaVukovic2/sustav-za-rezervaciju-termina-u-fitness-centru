@@ -3,18 +3,17 @@ import type { Filteri, Termin } from "../types";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
-const userId = "123";
-
 export const useDohvatiTermine = (
   search: string,
   filteri: Filteri | undefined,
+  userId: string | undefined
 ) => {
   return useQuery<Termin[], Error>({
     queryKey: ["termini", search, filteri],
     queryFn: async () => {
       const params = new URLSearchParams();
 
-      params.append("userId", userId);
+      params.append("userId", userId!);
 
       if (search) {
         params.append("search", search);

@@ -30,17 +30,21 @@ export default function TerminCard({ termin }: TerminProps) {
 
   const rezervirajTermin = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    if (!korisnik) return;
+    
     mutateRezerviraj({
       terminId: termin._id,
-      userId: "123",
+      userId: korisnik?._id,
     });
   };
 
   const otkaziRezervaciju = (e?: MouseEvent<HTMLElement>) => {
     e?.preventDefault();
+    if (!korisnik) return;
+
     mutateOtkazi({
       terminId: termin._id,
-      userId: "123",
+      userId: korisnik?._id,
     });
   };
 
