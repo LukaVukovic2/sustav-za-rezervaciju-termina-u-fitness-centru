@@ -7,6 +7,7 @@ export type Termin = {
   brojRezervacija: number;
   trajanjeMin: number;
   idTrenera: string;
+  imeTrenera: string;
   userRezervirao: boolean;
 }
 

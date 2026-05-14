@@ -9,7 +9,6 @@ import { useAuth } from "../hooks/useAuth";
 
 const NoviTerminPage = () => {
   const { korisnik } = useAuth();
-  console.log(korisnik)
   const [form] = useForm<TerminForm>();
   const { mutate } = useDodajTermin();
 

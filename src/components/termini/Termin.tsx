@@ -31,7 +31,7 @@ export default function TerminCard({ termin }: TerminProps) {
   const rezervirajTermin = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (!korisnik) return;
-    
+
     mutateRezerviraj({
       terminId: termin._id,
       userId: korisnik?._id,
@@ -73,7 +73,7 @@ export default function TerminCard({ termin }: TerminProps) {
       >
         <IconWrapper>
           <Avatar size={30}>{termin.idTrenera}</Avatar>
-          <p>{termin.idTrenera}</p>
+          <p>{termin.imeTrenera}</p>
         </IconWrapper>
         <Flex
           gap={10}

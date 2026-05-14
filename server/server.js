@@ -122,7 +122,7 @@ app.get("/termini", async (req, res) => {
     if (search) {
       filter.$or = [
         { naziv: { $regex: search, $options: "i" } },
-        { idTrenera: { $regex: search, $options: "i" } },
+        { imeTrenera: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -138,26 +138,36 @@ app.get("/termini", async (req, res) => {
       }
     }
 
-    const termini = await Termin.find(filter);
+    let termini = await Termin.find();
+    const korisnici = await Korisnik.find();
     const rezervacije = await Rezervacija.find();
 
-    const rezultat = termini.map((t) => {
-      const rezervacijeTermina = rezervacije.filter(
-        (r) => r.terminId.toString() === t._id.toString(),
+    let rezultat = termini.map((t) => {
+      const korisnik = korisnici.find(
+        k => k._id.toString() === t.idTrenera.toString()
       );
 
-      const brojRezervacija = rezervacijeTermina.length;
-
-      const userRezervirao = userId
-        ? rezervacijeTermina.some((r) => r.userId === userId)
-        : false;
+      const rezervacijeTermina = rezervacije.filter(
+        (r) => r.terminId.toString() === t._id.toString()
+      );
 
       return {
         ...t.toObject(),
-        brojRezervacija,
-        userRezervirao,
+        imeTrenera: korisnik ? korisnik.ime : null,
+        brojRezervacija: rezervacijeTermina.length,
+        userRezervirao: userId
+          ? rezervacijeTermina.some(r => r.userId === userId)
+          : false,
       };
     });
+
+    if (search) {
+      rezultat = rezultat.filter((t) =>
+        t.naziv.toLowerCase().includes(search.toLowerCase()) ||
+        (t.imeTrenera &&
+          t.imeTrenera.toLowerCase().includes(search.toLowerCase()))
+      );
+    }
 
     res.json(rezultat);
   } catch (err) {
