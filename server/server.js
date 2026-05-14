@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcrypt"); 
 const jwt = require("jsonwebtoken");
+const { Korisnik, Termin, Rezervacija } = require("./modeli");
 
 const app = express();
 app.use(cors());
@@ -17,74 +18,14 @@ mongoose.connection.once("open", () => {
   console.log("Connected to DB:", mongoose.connection.name);
 });
 
-const Termin = mongoose.model(
-  "Termin",
-  {
-    naziv: String,
-    idTrenera: String,
-    vrijeme: Date,
-    trajanjeMin: Number,
-    rezervirano: Number,
-    brojMjesta: Number,
-    opis: String
-  },
-  "termini",
-);
-
-const Rezervacija = mongoose.model(
-  "Rezervacija",
-  {
-    terminId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Termin",
-      required: true,
-    },
-    userId: String,
-    vrijemeRezervacije: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  "rezervacije",
-);
-
-const Korisnik = mongoose.model(
-  "Korisnik",
-  {
-    ime: {
-      type: String,
-      required: true,
-      unique: true
-    },
-
-    email: {
-      type: String,
-      required: true,
-      unique: true
-    },
-
-    lozinka: {
-      type: String,
-      required: true
-    },
-    uloga: {
-      type: String,
-      required: true
-    },
-    specijalnost: {
-      type: String
-    }
-  },
-  "korisnici"
-);
-
-app.post("/register", async (req, res) => {
+app.post("/registracija", async (req, res) => {
   try {
-    const { email, lozinka, uloga, specijalnost = null } = req.body;
+    const { ime, email, lozinka, uloga, specijalnost = null } = req.body;
 
     const hashLozinka = await bcrypt.hash(lozinka, 10);
 
     const korisnik = new Korisnik({
+      ime,
       email,
       lozinka: hashLozinka,
       uloga,
@@ -101,6 +42,57 @@ app.post("/register", async (req, res) => {
     res.status(500).json(err)
   }
 })
+
+app.post("/prijava", async (req, res) => {
+  try {
+    const { email, lozinka } = req.body;
+
+    const korisnik = await Korisnik.findOne({ email });
+
+    if (!korisnik) {
+      return res.status(400).json({
+        message: "Korisnik ne postoji"
+      });
+    }
+
+    const validnaLozinka = await bcrypt.compare(
+      lozinka,
+      korisnik.lozinka
+    );
+
+    if (!validnaLozinka) {
+      return res.status(400).json({
+        message: "Pogrešna lozinka"
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: korisnik._id,
+        uloga: korisnik.uloga
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d"
+      }
+    );
+
+    res.status(200).json({
+      message: "Uspješna prijava",
+      token,
+      korisnik: {
+        id: korisnik._id,
+        ime: korisnik.ime,
+        email: korisnik.email,
+        uloga: korisnik.uloga,
+        specijalnost: korisnik.specijalnost
+      }
+    });
+
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 app.get("/termini", async (req, res) => {
   try {

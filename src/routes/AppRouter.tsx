@@ -19,7 +19,7 @@ export const appRouter = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
+    path: "/autentifikacija/forma",
     element: <AuthForma />
   },
 ]);

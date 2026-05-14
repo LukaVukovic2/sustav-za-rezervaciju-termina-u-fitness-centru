@@ -1,9 +1,9 @@
 import { Button, Form, Input, Radio, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
-import type { Korisnik, Uloga } from "../../types";
+import type { AuthPolja, Uloga } from "../../types";
 import { useState } from "react";
+import { useAutentificirajKorisnika } from "../../hooks/useAutentificirajKorisnika";
 
-type AuthPolja = Korisnik & { lozinka: string }
 
 const uloge: Uloga[] = [
   "Korisnik",
@@ -11,16 +11,13 @@ const uloge: Uloga[] = [
 ]
 
 export default function AuthForma() {
+  const { mutate } = useAutentificirajKorisnika();
   const [form] = useForm<AuthPolja>();
   const uloga = Form.useWatch('uloga', form);
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
-  const promijeniTipForme = () => {
-    setIsLogin(prev => !prev);
-  }
-
   const onFinish = (values: AuthPolja) => {
-    console.log(values)
+    mutate({ korisnik: values, isLogin })
   }
   
   return (
@@ -101,7 +98,7 @@ export default function AuthForma() {
             </Button>
             <Button
               htmlType="button"
-              onClick={promijeniTipForme}
+              onClick={() => setIsLogin(prev => !prev)}
             >
               {isLogin ? "Nemaš još račun? Registriraj se" : "Imaš već račun? Prijavi se"}
             </Button>

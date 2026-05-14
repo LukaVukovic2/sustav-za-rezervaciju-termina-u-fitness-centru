@@ -21,6 +21,8 @@ export type RezervacijaMapped = Termin & Rezervacija;
 
 export type Uloga = "Korisnik" | "Trener" | "Administrator";
 
+export type AuthPolja = Korisnik & { lozinka: string }
+
 export type Korisnik = {
   _id: string,
   ime: string,
