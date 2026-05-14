@@ -2,11 +2,11 @@ import { Table } from "antd";
 import { useDohvatiRezervacijePoID } from "../hooks/useDohvatiRezervacijePoID";
 import { mojeRezervacijeStupci } from "../components/stupciTablice/mojeRezervacijeStupci";
 import type { RezervacijaMapped } from "../types";
-
-const userId = "123";
+import { useAuth } from "../hooks/useAuth";
 
 const MojeRezervacijePage = () => {
-  const { data: rezervacije, isLoading } = useDohvatiRezervacijePoID(userId);
+  const { korisnik } = useAuth();
+  const { data: rezervacije, isLoading } = useDohvatiRezervacijePoID(korisnik?._id);
   if (isLoading) return <div>Dohvaćanje rezervacija...</div>;
 
   return (

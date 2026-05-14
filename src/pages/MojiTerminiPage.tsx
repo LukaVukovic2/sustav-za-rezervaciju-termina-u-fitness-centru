@@ -3,9 +3,11 @@ import { useDohvatiTreneroveTermine } from "../hooks/useDohvatiTreneroveTermine"
 import { useIzbrisiTermin } from "../hooks/useIzbrisiTermin";
 import { mojiTerminiStupci } from "../components/stupciTablice/mojiTerminiStupci";
 import { useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 const MojiTerminiPage = () => {
-  const { data, isLoading } = useDohvatiTreneroveTermine();
+  const { korisnik } = useAuth();
+  const { data, isLoading } = useDohvatiTreneroveTermine(korisnik?._id);
   const { mutate: izbrisiTermin } = useIzbrisiTermin();
   const navigate = useNavigate();
   

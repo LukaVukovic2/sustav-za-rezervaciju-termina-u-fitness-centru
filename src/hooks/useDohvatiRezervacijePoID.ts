@@ -3,7 +3,7 @@ import type { RezervacijaMapped } from "../types";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
-export const useDohvatiRezervacijePoID = (userId: string) => {
+export const useDohvatiRezervacijePoID = (userId: string | undefined) => {
   const dohvatiMojeRezervacije = async () => {
     const res = await fetch(`${baseUrl}/rezervacije?userId=${userId}`);
 

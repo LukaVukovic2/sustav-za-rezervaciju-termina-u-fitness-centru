@@ -3,9 +3,7 @@ import type { Termin } from "../types";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
-const idTrenera = "Mate Vilac";
-
-export const useDohvatiTreneroveTermine = () => {
+export const useDohvatiTreneroveTermine = (idTrenera: string | undefined) => {
   return useQuery<Termin[], Error>({
     queryKey: ["mojiTermini", idTrenera],
     queryFn: async () => {
