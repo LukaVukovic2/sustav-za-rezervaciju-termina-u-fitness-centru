@@ -21,9 +21,10 @@ import { useAuth } from "../../hooks/useAuth";
 
 type TerminProps = {
   termin: Termin;
+  className?: string;
 };
 
-export default function TerminCard({ termin }: TerminProps) {
+export default function TerminCard({ termin, className }: TerminProps) {
   const { mutate: mutateRezerviraj, isPending: isPendingRezerviraj } = useRezervirajTermin();
   const { mutate: mutateOtkazi, isPending: isPendingOtkazi } = useOtkaziRezervaciju();
   const { korisnik } = useAuth();
@@ -54,6 +55,7 @@ export default function TerminCard({ termin }: TerminProps) {
   const uTijekuAkcija = isPendingRezerviraj || isPendingOtkazi;
   return (
     <Card
+      className={className}
       title={
         <NavLink
           to={`/termin/${termin._id}`}
@@ -99,7 +101,7 @@ export default function TerminCard({ termin }: TerminProps) {
         </Flex>
         
         {
-          korisnik?.uloga === "Korisnik" && (
+          korisnik?.uloga === "Korisnik" && className !== "arhivirani-termin" && (
             <IconWrapper>
               <Button
                 onClick={rezervirajTermin}

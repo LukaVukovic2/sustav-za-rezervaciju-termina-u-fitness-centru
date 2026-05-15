@@ -165,7 +165,11 @@ app.get("/termini", async (req, res) => {
       );
     }
 
-    res.json(rezultat);
+    res.json(
+      rezultat.sort(
+        (a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime(),
+      ),
+    );
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
