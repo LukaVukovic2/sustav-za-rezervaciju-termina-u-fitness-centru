@@ -9,6 +9,7 @@ import {
   MojeRezervacijePage,
   MojiTerminiPage,
   NoviTerminPage,
+  PregledRezervacijaPage,
   TerminDetaljiPage,
   UrediTerminPage,
 } from "../pages";
@@ -55,9 +56,13 @@ export const appRouter = createBrowserRouter([
                 element: <MojiTerminiPage />,
               },
               {
+                path: "/pregled-rezervacija",
+                element: <PregledRezervacijaPage />
+              },
+              {
                 path: "/termin/uredi/:id",
                 element: <UrediTerminPage />,
-              },
+              }
             ],
           },
         ],

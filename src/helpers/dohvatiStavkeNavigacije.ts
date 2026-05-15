@@ -18,6 +18,10 @@ export const dohvatiStavke = (uloga?: string) => {
       key: "mojiTermini",
       label: "Moji termini",
     },
+    {
+      key: "pregledRezervacija",
+      label: "Pregled rezervacija"
+    }
   ];
 
   const odjaviKorisnika = [

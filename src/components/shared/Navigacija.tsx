@@ -18,6 +18,9 @@ export default function Navigacija() {
       case 'mojiTermini':
         navigate("/moji-termini");
         break;
+      case 'pregledRezervacija':
+        navigate("/pregled-rezervacija");
+        break;
       case 'odjava':
         odjaviKorisnika();
         navigate("/autentifikacija/forma");

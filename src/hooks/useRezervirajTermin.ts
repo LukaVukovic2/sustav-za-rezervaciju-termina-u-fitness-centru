@@ -25,6 +25,7 @@ export const useRezervirajTermin = () => {
     mutationFn: rezerviraj,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["termini"] });
+      queryClient.invalidateQueries({ queryKey: ["mojeRezervacije"]})
       message.success("Uspješno ste rezervirali termin!");
     },
     onError: (error: AxiosError<Error>) => {

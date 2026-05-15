@@ -4,7 +4,7 @@ require("dotenv").config({ path: path.join(__dirname, ".env.server") });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require("bcrypt"); 
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Korisnik, Termin, Rezervacija } = require("./modeli");
 
@@ -29,20 +29,20 @@ app.post("/registracija", async (req, res) => {
       email,
       lozinka: hashLozinka,
       uloga,
-      specijalnost
-    })
+      specijalnost,
+    });
 
     await korisnik.save();
 
     const token = jwt.sign(
       {
         id: korisnik._id,
-        uloga: korisnik.uloga
+        uloga: korisnik.uloga,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d"
-      }
+        expiresIn: "7d",
+      },
     );
 
     res.status(201).json({
@@ -53,14 +53,13 @@ app.post("/registracija", async (req, res) => {
         ime: korisnik.ime,
         email: korisnik.email,
         uloga: korisnik.uloga,
-        specijalnost: korisnik.specijalnost
-      }
-    })
-
+        specijalnost: korisnik.specijalnost,
+      },
+    });
   } catch (err) {
-    res.status(500).json(err)
+    res.status(500).json(err);
   }
-})
+});
 
 app.post("/prijava", async (req, res) => {
   try {
@@ -70,30 +69,27 @@ app.post("/prijava", async (req, res) => {
 
     if (!korisnik) {
       return res.status(400).json({
-        message: "Korisnik ne postoji"
+        message: "Korisnik ne postoji",
       });
     }
 
-    const validnaLozinka = await bcrypt.compare(
-      lozinka,
-      korisnik.lozinka
-    );
+    const validnaLozinka = await bcrypt.compare(lozinka, korisnik.lozinka);
 
     if (!validnaLozinka) {
       return res.status(400).json({
-        message: "Pogrešna lozinka"
+        message: "Pogrešna lozinka",
       });
     }
 
     const token = jwt.sign(
       {
         id: korisnik._id,
-        uloga: korisnik.uloga
+        uloga: korisnik.uloga,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d"
-      }
+        expiresIn: "7d",
+      },
     );
 
     res.status(200).json({
@@ -104,10 +100,9 @@ app.post("/prijava", async (req, res) => {
         ime: korisnik.ime,
         email: korisnik.email,
         uloga: korisnik.uloga,
-        specijalnost: korisnik.specijalnost
-      }
+        specijalnost: korisnik.specijalnost,
+      },
     });
-
   } catch (err) {
     res.status(500).json(err);
   }
@@ -144,11 +139,11 @@ app.get("/termini", async (req, res) => {
 
     let rezultat = termini.map((t) => {
       const korisnik = korisnici.find(
-        k => k._id.toString() === t.idTrenera.toString()
+        (k) => k._id.toString() === t.idTrenera.toString(),
       );
 
       const rezervacijeTermina = rezervacije.filter(
-        (r) => r.terminId.toString() === t._id.toString()
+        (r) => r.terminId.toString() === t._id.toString(),
       );
 
       return {
@@ -156,16 +151,17 @@ app.get("/termini", async (req, res) => {
         imeTrenera: korisnik ? korisnik.ime : null,
         brojRezervacija: rezervacijeTermina.length,
         userRezervirao: userId
-          ? rezervacijeTermina.some(r => r.userId === userId)
+          ? rezervacijeTermina.some((r) => r.userId === userId)
           : false,
       };
     });
 
     if (search) {
-      rezultat = rezultat.filter((t) =>
-        t.naziv.toLowerCase().includes(search.toLowerCase()) ||
-        (t.imeTrenera &&
-          t.imeTrenera.toLowerCase().includes(search.toLowerCase()))
+      rezultat = rezultat.filter(
+        (t) =>
+          t.naziv.toLowerCase().includes(search.toLowerCase()) ||
+          (t.imeTrenera &&
+            t.imeTrenera.toLowerCase().includes(search.toLowerCase())),
       );
     }
 
@@ -205,8 +201,8 @@ app.patch("/termini/:id", async (req, res) => {
 
   try {
     const updatedTermin = await Termin.findByIdAndUpdate(id, updateData, {
-      returnDocument: 'after',
-      runValidators: true
+      returnDocument: "after",
+      runValidators: true,
     });
 
     if (!updatedTermin) {
@@ -216,7 +212,9 @@ app.patch("/termini/:id", async (req, res) => {
     res.json(updatedTermin);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Došlo je do greške pri uređivanju termina" });
+    res
+      .status(500)
+      .json({ message: "Došlo je do greške pri uređivanju termina" });
   }
 });
 
@@ -243,7 +241,7 @@ app.delete("/termini/:id", async (req, res) => {
 app.get("/termini/moji-termini/:id", async (req, res) => {
   try {
     const termini = await Termin.find({
-      idTrenera: req.params.id
+      idTrenera: req.params.id,
     });
     res.json(termini);
   } catch (error) {
@@ -327,6 +325,41 @@ app.get("/rezervacije", async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Greška na serveru" });
+  }
+});
+
+app.get("/pregled-rezervacija", async (req, res) => {
+  try {
+    const { idTrenera } = req.query;
+    const termini = await Termin.find({ idTrenera });
+    const rezervacije = await Rezervacija.find();
+    const korisnici = await Korisnik.find();
+
+    const rezultat = rezervacije
+      .map((rezervacija) => {
+        const termin = termini.find(
+          (t) => t._id.toString() === rezervacija.terminId.toString(),
+        );
+        const korisnik = korisnici.find(
+          (k) => k._id.toString() === rezervacija.userId.toString(),
+        );
+
+        if (!termin) return;
+
+        return {
+          naziv: termin.naziv,
+          ime: korisnik.ime,
+          vrijemeRezervacije: rezervacija.vrijemeRezervacije,
+        };
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.vrijemeRezervacije).getTime() -
+          new Date(a.vrijemeRezervacije).getTime(),
+      );
+    return res.status(200).json(rezultat);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 });
 

@@ -2,7 +2,7 @@ import type { ColumnsType } from "antd/es/table";
 import type { RezervacijaMapped } from "../../types";
 import { formatirajVrijemeTreninga } from "../../helpers/formatirajVrijemeTreninga";
 
-export function mojeRezervacijeStupci(): ColumnsType<RezervacijaMapped> {  
+export function mojeRezervacijeStupci(): ColumnsType<RezervacijaMapped> {
   return [
     {
       title: "Naziv termina",
@@ -13,13 +13,13 @@ export function mojeRezervacijeStupci(): ColumnsType<RezervacijaMapped> {
       title: "Vrijeme",
       dataIndex: "vrijeme",
       key: "vrijeme",
-      render: value => formatirajVrijemeTreninga(value)
+      render: (value) => formatirajVrijemeTreninga(value),
     },
     {
       title: "Trajanje",
       dataIndex: "trajanjeMin",
       key: "trajanjeMin",
-      render: value => value + " min"
+      render: (value) => value + " min",
     },
   ];
 }
