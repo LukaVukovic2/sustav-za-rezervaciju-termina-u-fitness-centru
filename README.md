@@ -1,3 +1,19 @@
+# Funkcionalnosti (✅ označava implementiranu funkcionalnost)
+- Registracija korisnika ✅
+- Prijava korisnika ✅
+- Pregled termina ✅
+- Pretraga termina ✅
+- Filtriranje termina ✅
+- Rezervacija termina ✅
+- Otkazivanje rezervacije ✅
+- Pregled rezervacija ✅
+- Pregled detalja termina ✅
+- Kreiranje termina ✅
+- Uređivanje termina ✅
+- Brisanje termina ✅
+- Pregled rezervacija termina ✅
+- Upravljanje korisnicima
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
