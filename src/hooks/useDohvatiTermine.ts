@@ -9,8 +9,7 @@ export const useDohvatiTermine = (
   userId: string | undefined
 ) => {
   return useQuery<Termin[], Error>({
-    queryKey: ["termini", search, filteri],
-    queryFn: async () => {
+      queryKey: ["termini", search, filteri, userId],    queryFn: async () => {
       const params = new URLSearchParams();
 
       params.append("userId", userId!);
@@ -22,6 +21,9 @@ export const useDohvatiTermine = (
       if (filteri?.vrijeme) {
         params.append("vrijemeOd", filteri.vrijeme[0].toString());
         params.append("vrijemeDo", filteri.vrijeme[1].toString());
+      }
+      if (filteri?.viseOd2Slobodna) {
+        params.append("viseOd2Slobodna", "true");
       }
 
       const res = await fetch(`${baseUrl}/termini?${params.toString()}`);

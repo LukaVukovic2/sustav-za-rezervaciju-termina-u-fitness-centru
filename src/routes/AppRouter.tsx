@@ -2,9 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 
 import ListaTermina from "../components/termini/ListaTermina";
 import AuthForma from "../components/autetifikacija/AuthForma";
-
+import KorisniciPage from "../pages/KorisniciPage";
 import { GlavniLayout } from "../components/shared/GlavniLayout";
-
 import {
   MojeRezervacijePage,
   MojiTerminiPage,
@@ -65,6 +64,15 @@ export const appRouter = createBrowserRouter([
               }
             ],
           },
+          {
+          element: <ZasticenaRuta dopustenaUloga={["Admin"]} />,
+          children: [
+            {
+              path: "/korisnici",
+              element: <KorisniciPage />,
+            },
+          ],
+        },
         ],
       },
     ],

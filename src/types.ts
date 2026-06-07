@@ -45,5 +45,6 @@ export type TerminForm = {
 }
 
 export type Filteri = {
-  vrijeme: number[];
-}
+  vrijeme?: [number, number];
+  viseOd2Slobodna?: boolean;
+};

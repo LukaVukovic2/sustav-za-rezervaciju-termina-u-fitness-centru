@@ -11,6 +11,31 @@ const { Korisnik, Termin, Rezervacija } = require("./modeli");
 const app = express();
 app.use(cors());
 app.use(express.json());
+const autentificirajToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nema tokena" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: "Token nije valjan" });
+  }
+};
+
+const samoAdmin = (req, res, next) => {
+  if (req.user.uloga !== "Admin") {
+    return res.status(403).json({ message: "Nemaš admin ovlasti" });
+  }
+
+  next();
+};
 
 mongoose.connect(process.env.MONGO_URI);
 
@@ -110,40 +135,19 @@ app.post("/prijava", async (req, res) => {
 
 app.get("/termini", async (req, res) => {
   try {
-    const { userId, search, vrijemeOd, vrijemeDo } = req.query;
+    const { userId, search, vrijemeOd, vrijemeDo, viseOd2Slobodna } = req.query;
 
-    const filter = {};
-
-    if (search) {
-      filter.$or = [
-        { naziv: { $regex: search, $options: "i" } },
-        { imeTrenera: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    if (vrijemeOd || vrijemeDo) {
-      filter.trajanjeMin = {};
-
-      if (vrijemeOd) {
-        filter.trajanjeMin.$gte = Number(vrijemeOd);
-      }
-
-      if (vrijemeDo) {
-        filter.trajanjeMin.$lte = Number(vrijemeDo);
-      }
-    }
-
-    let termini = await Termin.find();
+    const termini = await Termin.find();
     const korisnici = await Korisnik.find();
     const rezervacije = await Rezervacija.find();
 
     let rezultat = termini.map((t) => {
       const korisnik = korisnici.find(
-        (k) => k._id.toString() === t.idTrenera.toString(),
+        (k) => k._id.toString() === t.idTrenera.toString()
       );
 
       const rezervacijeTermina = rezervacije.filter(
-        (r) => r.terminId.toString() === t._id.toString(),
+        (r) => r.terminId.toString() === t._id.toString()
       );
 
       return {
@@ -161,14 +165,39 @@ app.get("/termini", async (req, res) => {
         (t) =>
           t.naziv.toLowerCase().includes(search.toLowerCase()) ||
           (t.imeTrenera &&
-            t.imeTrenera.toLowerCase().includes(search.toLowerCase())),
+            t.imeTrenera.toLowerCase().includes(search.toLowerCase()))
       );
+    }
+
+    if (vrijemeOd || vrijemeDo) {
+      rezultat = rezultat.filter((t) => {
+        const trajanje = Number(t.trajanjeMin);
+
+        if (vrijemeOd && trajanje < Number(vrijemeOd)) {
+          return false;
+        }
+
+        if (vrijemeDo && trajanje > Number(vrijemeDo)) {
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    if (viseOd2Slobodna === "true") {
+      rezultat = rezultat.filter((t) => {
+        const slobodnaMjesta =
+          Number(t.brojMjesta) - Number(t.brojRezervacija);
+
+        return slobodnaMjesta > 2;
+      });
     }
 
     res.json(
       rezultat.sort(
-        (a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime(),
-      ),
+        (a, b) => new Date(b.vrijeme).getTime() - new Date(a.vrijeme).getTime()
+      )
     );
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -364,6 +393,64 @@ app.get("/pregled-rezervacija", async (req, res) => {
     return res.status(200).json(rezultat);
   } catch (err) {
     return res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/korisnici", autentificirajToken, samoAdmin, async (req, res) => {
+  try {
+    const korisnici = await Korisnik.find().select("-lozinka");
+    res.status(200).json(korisnici);
+  } catch (error) {
+    res.status(500).json({ message: "Greška kod dohvaćanja korisnika", error });
+  }
+});
+
+app.delete("/korisnici/:id", autentificirajToken, samoAdmin, async (req, res) => {
+  try {
+    const korisnik = await Korisnik.findById(req.params.id);
+
+    if (!korisnik) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
+
+    if (korisnik.email === "admin@a") {
+      return res.status(400).json({ message: "Main admin se ne može obrisati" });
+    }
+
+    await Korisnik.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "Korisnik uspješno obrisan" });
+  } catch (error) {
+    res.status(500).json({ message: "Greška kod brisanja korisnika", error });
+  }
+});
+
+app.patch("/korisnici/:id/lozinka", autentificirajToken, samoAdmin, async (req, res) => {
+  try {
+    const { novaLozinka } = req.body;
+
+    if (!novaLozinka) {
+      return res.status(400).json({ message: "Nova lozinka je obavezna" });
+    }
+
+    const hashLozinka = await bcrypt.hash(novaLozinka, 10);
+
+    const korisnik = await Korisnik.findByIdAndUpdate(
+      req.params.id,
+      { lozinka: hashLozinka },
+      { new: true }
+    ).select("-lozinka");
+
+    if (!korisnik) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
+
+    res.status(200).json({
+      message: "Lozinka uspješno promijenjena",
+      korisnik,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Greška kod promjene lozinke", error });
   }
 });
 
