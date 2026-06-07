@@ -12,7 +12,7 @@
 - Uređivanje termina ✅
 - Brisanje termina ✅
 - Pregled rezervacija termina ✅
-- Upravljanje korisnicima
+- Upravljanje korisnicima ✅
 
 # React + TypeScript + Vite
 
