@@ -12,6 +12,7 @@ const PregledRezervacijaPage = () => {
 
   return (
     <Table<RezervacijaKorisnik>
+      style={{ padding: "20px"}}
       dataSource={rezervacije}
       locale={{ emptyText: "Ne postoje rezervacije za vaše termine" }}
       columns={pregledRezervacijaStupci()}

@@ -10,7 +10,7 @@ const TerminDetaljiPage = () => {
 
   if (isLoading) return "Učitavanje detalja...";
   return (
-    <Descriptions title={termin?.naziv}>
+    <Descriptions title={termin?.naziv} style={{ padding: "30px" }} bordered column={2}>
       <Descriptions.Item label="Opis">{termin?.opis}</Descriptions.Item>
       <Descriptions.Item label="Trajanje">
         {termin?.trajanjeMin} min
@@ -26,7 +26,7 @@ const TerminDetaljiPage = () => {
         {termin?.idTrenera}
       </Descriptions.Item>
       <Descriptions.Item label="Ostale aktivnosti od trenera">
-        ...
+        -
       </Descriptions.Item>
     </Descriptions>
   );

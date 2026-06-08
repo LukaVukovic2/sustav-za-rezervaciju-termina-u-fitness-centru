@@ -11,6 +11,7 @@ const MojeRezervacijePage = () => {
 
   return (
     <Table<RezervacijaMapped>
+      style={{ padding: "20px "}}
       dataSource={rezervacije}
       locale={{ emptyText: "Niste još uvijek napravili nijednu rezervaciju" }}
       columns={mojeRezervacijeStupci()}

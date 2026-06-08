@@ -376,12 +376,13 @@ app.get("/pregled-rezervacija", async (req, res) => {
         const korisnik = korisnici.find(
           (k) => k._id.toString() === rezervacija.userId.toString(),
         );
-
+        console.log(termin)
         if (!termin) return;
+        
 
         return {
           naziv: termin.naziv,
-          ime: korisnik.ime,
+          ime: korisnik?.ime,
           vrijemeRezervacije: rezervacija.vrijemeRezervacije,
         };
       })
@@ -389,7 +390,7 @@ app.get("/pregled-rezervacija", async (req, res) => {
         (a, b) =>
           new Date(b.vrijemeRezervacije).getTime() -
           new Date(a.vrijemeRezervacije).getTime(),
-      );
+      ).filter(Boolean);
     return res.status(200).json(rezultat);
   } catch (err) {
     return res.status(500).json({ error: err.message });

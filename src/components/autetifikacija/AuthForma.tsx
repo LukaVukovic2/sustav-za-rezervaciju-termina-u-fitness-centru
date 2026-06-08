@@ -21,12 +21,13 @@ export default function AuthForma() {
   }
   
   return (
-    <>
+    <div style={{padding: "50px 0"}}>
       <h2>{isLogin ? "Prijava " : "Registracija"}</h2>
       <Form
         form={form}
         onFinish={onFinish}
         wrapperCol={{ span: 15 }}
+        labelCol={{ span: 4}}
         initialValues={{
           uloga: "Korisnik"
         }}
@@ -49,7 +50,7 @@ export default function AuthForma() {
           label="Email"
           rules={[{ required: true, message: "Email mora biti unesen" }]}
         >
-          <Input placeholder="Email" type="email" />
+          <Input placeholder="Email" type="email" autoComplete="off"/>
         </Form.Item>
 
         <Form.Item
@@ -88,8 +89,7 @@ export default function AuthForma() {
           )
         }
 
-        <Form.Item>
-          <Space>
+          <Space align="center" >
             <Button
               type="primary"
               htmlType="submit"
@@ -103,8 +103,7 @@ export default function AuthForma() {
               {isLogin ? "Nemaš još račun? Registriraj se" : "Imaš već račun? Prijavi se"}
             </Button>
           </Space>
-        </Form.Item>
       </Form>
-    </>
+    </div>
   );
 }
